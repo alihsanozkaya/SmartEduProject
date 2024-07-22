@@ -1,11 +1,12 @@
 const express = require("express");
-const courseControllers = require("../controllers/courseController");
+const courseController = require("../controllers/courseController");
 const roleMiddleware = require("../middlewares/roleMiddleware")
 
 const router = express.Router();
 
-router.route("/").post(roleMiddleware(["teacher", "admin"]), courseControllers.createCourse);
-router.route("/").get(courseControllers.getAllCourses);
-router.route("/:slug").get(courseControllers.getCourse);
+router.route("/").post(roleMiddleware(["teacher", "admin"]), courseController.createCourse);
+router.route("/").get(courseController.getAllCourses);
+router.route("/:slug").get(courseController.getCourse);
+router.route("/enroll").post(courseController.enrollCourse);
 
 module.exports = router;
