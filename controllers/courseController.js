@@ -1,9 +1,16 @@
 const Course = require("../models/Course");
 const Category = require("../models/Category");
+const User = require("../models/User");
 
 exports.createCourse = async (req, res) => {
   try {
-    const course = await Course.create(req.body);
+    const course = await Course.create({
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      user: req.session.userID
+    });
+
     res.status(201).redirect("/courses");
   } catch (error) {
     res.status(400).json({
@@ -41,14 +48,18 @@ exports.getAllCourses = async (req, res) => {
 
 exports.getCourse = async (req, res) => {
   try {
-    const course = await Course.findOne({ slug: req.params.slug });
-    res.status(200).render("course", {
+    const user = await User.findById(req.session.userID);
+    const course = await Course.findOne({slug: req.params.slug}).populate('user')
+    const categories = await Category.find();
+    res.status(200).render('course', {
       course,
-      page_name: "courses",
+      page_name: 'courses',
+      user,
+      categories
     });
   } catch (error) {
     res.status(400).json({
-      status: "fail",
+      status: 'fail',
       error,
     });
   }

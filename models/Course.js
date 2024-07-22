@@ -23,8 +23,12 @@ const CourseSchema = new Schema({
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
+    ref: 'Category',
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }
 });
 
 CourseSchema.pre("validate", function (next) {
@@ -35,5 +39,5 @@ CourseSchema.pre("validate", function (next) {
   next();
 });
 
-const Course = mongoose.model("course", CourseSchema);
+const Course = mongoose.model("Course", CourseSchema);
 module.exports = Course;
