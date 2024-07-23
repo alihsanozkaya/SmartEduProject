@@ -19,25 +19,48 @@ const UserSchema = new Schema({
   role: {
     type: String,
     enum: ["student", "teacher", "admin"],
-    default: "student"
+    default: "student",
   },
-  courses: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course'
-  }]
+  courses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    },
+  ],
 });
 
+// UserSchema.pre("save", function (next) {
+//   const user = this;
+//   if (!user.isModified("password")) {
+//     return next();
+//   }
+//   bcrypt.hash(user.password, 10, (error, hash) => {
+//     if (error) {
+//       return next(error);
+//     }
+//     user.password = hash;
+//     next();
+//   });
+// });
+
+// Değişiklik yaptıktan sonra tekrardan hash yaptırmamak için
 UserSchema.pre("save", function (next) {
   const user = this;
   if (!user.isModified("password")) {
     return next();
   }
-  bcrypt.hash(user.password, 10, (error, hash) => {
-    if (error) {
-      return next(error);
+
+  bcrypt.genSalt(10, function (err, salt) {
+    if (err) {
+      return next(err);
     }
-    user.password = hash;
-    next();
+    bcrypt.hash(user.password, salt, function (err, hash) {
+      if (err) {
+        return next(err);
+      }
+      user.password = hash;
+      next();
+    });
   });
 });
 
